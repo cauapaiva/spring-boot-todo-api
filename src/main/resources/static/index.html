@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+
+<body>
+
+<h1>Todo List</h1>
+
+<div class="form">
+    <input id="title" placeholder="Título">
+    <input id="description" placeholder="Descrição">
+    <button onclick="createTask()">Criar</button>
+</div>
+
+<h2>Tarefas</h2>
+
+<ul id="tasks"></ul>
+
+<script>
+
+    const API = "http://localhost:8080/tasks"
+
+    async function loadTasks(){
+
+        const response = await fetch(API)
+        const tasks = await response.json()
+
+        const list = document.getElementById("tasks")
+        list.innerHTML = ""
+
+        tasks.forEach(task => {
+
+            const li = document.createElement("li")
+
+            li.innerHTML = `<b>${task.title}</b> - ${task.description}`
+
+            list.appendChild(li)
+
+        })
+
+    }
+
+    async function createTask(){
+
+        const title = document.getElementById("title").value
+        const description = document.getElementById("description").value
+
+        await fetch(API,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                title,
+                description,
+                completed:false
+            })
+        })
+
+        loadTasks()
+
+    }
+
+    loadTasks()
+
+</script>
+
+</body>
+</html>
